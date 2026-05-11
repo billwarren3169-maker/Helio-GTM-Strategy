@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helio GTM — betty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@250;300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===========================================
+     VIEWPORT FITTING: MANDATORY BASE STYLES
+     =========================================== */
+  html, body { height: 100%; overflow-x: hidden; }
+  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+  .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+  .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); }
+  :root {
+    --title-size: clamp(1.5rem, 5vw, 4rem);
+    --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+    --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+    --slide-padding: clamp(1rem, 4vw, 4rem);
+    --content-gap: clamp(0.5rem, 2vw, 2rem);
+    --element-gap: clamp(0.25rem, 1vw, 1rem);
+  }
+  .card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
+  @media (max-height: 700px) {
+    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); --h2-size: clamp(1rem, 3vw, 1.75rem); }
+  }
+  @media (max-height: 600px) {
+    :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --content-gap: clamp(0.3rem, 1vw, 0.75rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+    .nav-dots, .keyboard-hint, .decorative { display: none; }
+  }
+  @media (max-height: 500px) {
+    :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); --h2-size: clamp(0.9rem, 2.5vw, 1.25rem); --body-size: clamp(0.65rem, 1vw, 0.85rem); }
+  }
+  @media (max-width: 600px) {
+    :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ===========================================
+     WARM EDITORIAL THEME
+     =========================================== */
+  :root {
+    --bg-primary: #f5f0e8;
+    --bg-card: rgba(255, 255, 255, 0.45);
+    --text-primary: #2c2418;
+    --text-secondary: #7a6e5e;
+    --text-muted: #a89e91;
+    --accent: #b8956a;
+    --accent-light: rgba(184, 149, 106, 0.10);
+    --accent-glow: rgba(184, 149, 106, 0.06);
+    --border: rgba(0, 0, 0, 0.05);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --font-display: 'Cormorant', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-cn: 'Noto Sans SC', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+  }
+
+  /* ===========================================
+     BACKGROUND: WARM GRADIENTS
+     =========================================== */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 10%, rgba(184, 149, 106, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 90%, rgba(184, 149, 106, 0.03) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb-1 {
+    width: clamp(220px, 28vw, 400px);
+    height: clamp(220px, 28vw, 400px);
+    background: radial-gradient(circle, rgba(184, 149, 106, 0.07) 0%, transparent 70%);
+    top: calc(-1 * clamp(60px, 6vw, 100px));
+    right: calc(-1 * clamp(40px, 4vw, 60px));
+  }
+
+  .orb-2 {
+    width: clamp(150px, 18vw, 260px);
+    height: clamp(150px, 18vw, 260px);
+    background: radial-gradient(circle, rgba(184, 149, 106, 0.05) 0%, transparent 65%);
+    bottom: 8%;
+    left: calc(-1 * clamp(30px, 3vw, 50px));
+  }
+
+  .orb-3 {
+    width: clamp(100px, 12vw, 180px);
+    height: clamp(100px, 12vw, 180px);
+    background: radial-gradient(circle, rgba(184, 149, 106, 0.04) 0%, transparent 60%);
+    bottom: 30%;
+    right: 12%;
+  }
+
+  /* ===========================================
+     VERTICAL ACCENT LINE
+     =========================================== */
+  .vline {
+    position: absolute;
+    left: clamp(24px, 3vw, 44px);
+    top: 10%;
+    bottom: 10%;
+    width: 1.5px;
+    background: linear-gradient(to bottom, transparent, rgba(184, 149, 106, 0.20), transparent);
+    z-index: 1;
+  }
+
+  /* ===========================================
+     TOP BAR · BOTTOM INFO · NAV — Hidden
+     =========================================== */
+  .top-bar { display: none !important; }
+  .bottom-info { display: none !important; }
+  /* ===========================================
+     SIDE NAV — right side dot navigation
+     =========================================== */
+  .side-nav {
+    position: fixed;
+    right: clamp(14px, 1.8vw, 28px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: clamp(10px, 1.2vh, 18px);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-expo);
+  }
+
+  .nav-dot {
+    display: block;
+    width: clamp(5px, 0.4vw, 7px);
+    height: clamp(5px, 0.4vw, 7px);
+    border-radius: 50%;
+    background: rgba(184, 149, 106, 0.25);
+    transition: all 0.4s var(--ease-out-expo);
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-dot {
+    background: var(--accent);
+    width: clamp(10px, 0.8vw, 14px);
+    border-radius: 3px;
+    height: clamp(5px, 0.4vw, 7px);
+  }
+
+  .nav-label {
+    font-family: var(--font-cn);
+    font-size: clamp(0.5rem, 0.6vw, 0.68rem);
+    color: var(--text-secondary);
+    font-weight: 300;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: all 0.25s var(--ease-out-expo);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-item:hover .nav-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .nav-item.active .nav-label {
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  @media (max-height: 500px) {
+    .side-nav { display: none; }
+  }
+
+  .top-bar {
+    position: absolute;
+    top: clamp(20px, 3vh, 36px);
+    left: clamp(24px, 3vw, 44px);
+    right: clamp(24px, 3vw, 44px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2;
+  }
+
+  .top-bar .logo {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: clamp(0.55rem, 0.65vw, 0.7rem);
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .top-bar .logo .accent-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-right: 6px;
+    opacity: 0.6;
+  }
+
+  .top-bar .page {
+    font-family: var(--font-cn);
+    font-weight: 300;
+    font-size: clamp(0.55rem, 0.65vw, 0.7rem);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ===========================================
+     CONTENT — CENTERED
+     =========================================== */
+  .content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: var(--slide-padding);
+    max-width: min(80vw, 820px);
+    width: 100%;
+  }
+
+  .content.left {
+    text-align: left;
+  }
+
+  .content.left .divider,
+  .content.left .accent-line {
+    margin-left: 0;
+  }
+
+  /* Tag */
+  .tag {
+    font-family: var(--font-body);
+    font-size: clamp(0.5rem, 0.6vw, 0.65rem);
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: clamp(20px, 3vh, 36px);
+  }
+
+  .tag .dash {
+    display: inline-block;
+    width: 14px;
+    height: 1px;
+    background: var(--text-muted);
+    vertical-align: middle;
+    margin: 0 7px;
+    opacity: 0.4;
+  }
+
+  /* H1 */
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2rem, 6.5vw, 4.5rem);
+    line-height: 1.12;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  h1 .accent {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  h1 .light {
+    font-weight: 200;
+    color: #b8aea3;
+  }
+
+  /* H2 */
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    line-height: 1.15;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  h2 .accent {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  h2 .light {
+    font-weight: 250;
+    color: #b8aea3;
+  }
+
+  /* Divider */
+  .divider {
+    width: clamp(24px, 2vw, 32px);
+    height: 1.5px;
+    background: var(--accent);
+    margin: clamp(18px, 2.5vh, 32px) auto;
+    opacity: 0.35;
+  }
+
+  .accent-line {
+    width: clamp(24px, 2vw, 32px);
+    height: 1.5px;
+    background: var(--accent);
+    margin: clamp(16px, 2.5vh, 28px) auto;
+    opacity: 0.35;
+  }
+
+  /* Subtitle */
+  .sub {
+    font-family: var(--font-cn);
+    font-size: clamp(0.75rem, 1.1vw, 1rem);
+    color: var(--text-secondary);
+    font-weight: 250;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    max-width: 72%;
+    margin: 0 auto;
+  }
+
+  .sub.wide {
+    max-width: 90%;
+  }
+
+  /* ===========================================
+     BODY TEXT (for content slides)
+     =========================================== */
+  .body-text {
+    font-family: var(--font-cn);
+    font-size: clamp(0.7rem, 1vw, 0.95rem);
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+  }
+
+  .body-text strong {
+    color: var(--text-primary);
+    font-weight: 450;
+  }
+
+  .body-text em {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 450;
+  }
+
+  /* ===========================================
+     CARDS
+     =========================================== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, clamp(180px, 28vw, 260px)), 1fr));
+    gap: clamp(10px, 1.2vw, 18px);
+    margin-top: clamp(14px, 2vh, 24px);
+    width: 100%;
+    max-width: min(90vw, 860px);
+  }
+
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border-radius: clamp(6px, 0.8vw, 10px);
+    padding: clamp(14px, 2vw, 22px);
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+
+  .card .num {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.5vw, 1.8rem);
+    color: var(--accent);
+    margin-bottom: clamp(6px, 0.6vh, 10px);
+    display: block;
+    line-height: 1;
+  }
+
+  .card h3 {
+    font-family: var(--font-cn);
+    font-weight: 450;
+    font-size: clamp(0.75rem, 0.95vw, 0.9rem);
+    color: var(--text-primary);
+    margin-bottom: clamp(4px, 0.5vh, 8px);
+    line-height: 1.4;
+  }
+
+  .card p {
+    font-family: var(--font-cn);
+    font-size: clamp(0.6rem, 0.8vw, 0.8rem);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ===========================================
+     INSIGHT BLOCK
+     =========================================== */
+  .insight-block {
+    background: var(--accent-light);
+    border-radius: clamp(6px, 0.8vw, 10px);
+    padding: clamp(14px, 2vw, 22px);
+    margin-top: clamp(10px, 1.5vh, 18px);
+    text-align: left;
+    width: 100%;
+    max-width: min(90vw, 860px);
+    border-left: 2px solid var(--accent);
+  }
+
+  .insight-block h3 {
+    font-family: var(--font-cn);
+    font-weight: 450;
+    font-size: clamp(0.7rem, 0.9vw, 0.9rem);
+    color: var(--text-primary);
+    margin-bottom: clamp(4px, 0.5vh, 8px);
+  }
+
+  .insight-block p {
+    font-family: var(--font-cn);
+    font-size: clamp(0.6rem, 0.8vw, 0.8rem);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .insight-block p strong {
+    color: var(--text-primary);
+    font-weight: 450;
+  }
+
+  /* ===========================================
+     QUOTE
+     =========================================== */
+  .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 350;
+    font-size: clamp(0.9rem, 1.5vw, 1.5rem);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: clamp(14px, 2.5vh, 28px) 0;
+    border-top: 1px solid rgba(184, 149, 106, 0.15);
+    border-bottom: 1px solid rgba(184, 149, 106, 0.15);
+    margin: clamp(12px, 2vh, 20px) auto;
+    max-width: min(80vw, 760px);
+  }
+
+  .quote .attr {
+    display: block;
+    font-family: var(--font-body);
+    font-style: normal;
+    font-weight: 350;
+    font-size: clamp(0.55rem, 0.65vw, 0.7rem);
+    color: var(--text-muted);
+    margin-top: clamp(8px, 1vh, 14px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ===========================================
+     TIMELINE
+     =========================================== */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(8px, 1vw, 14px);
+    margin-top: clamp(14px, 2vh, 22px);
+    width: 100%;
+    max-width: min(90vw, 860px);
+  }
+
+  .week {
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border-radius: clamp(6px, 0.8vw, 10px);
+    padding: clamp(10px, 1.5vw, 18px);
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .week .label {
+    font-family: var(--font-cn);
+    font-weight: 500;
+    font-size: clamp(0.6rem, 0.75vw, 0.8rem);
+    color: var(--accent);
+    margin-bottom: clamp(6px, 0.6vh, 10px);
+  }
+
+  .week ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .week li {
+    font-family: var(--font-cn);
+    font-size: clamp(0.55rem, 0.65vw, 0.72rem);
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.6;
+    padding-left: 10px;
+    position: relative;
+  }
+
+  .week li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  /* ===========================================
+     ARCHITECTURE DIAGRAM
+     =========================================== */
+  .arch {
+    margin-top: clamp(12px, 2vh, 22px);
+    width: 100%;
+    max-width: min(80vw, 600px);
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: clamp(0.55rem, 0.7vw, 0.75rem);
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .arch .layer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(6px, 1vw, 14px);
+    padding: clamp(6px, 0.8vh, 10px) clamp(10px, 1.5vw, 20px);
+    border-radius: clamp(4px, 0.5vw, 6px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    transition: background 0.3s ease;
+  }
+
+  .arch .layer.top {
+    background: rgba(184, 149, 106, 0.06);
+  }
+
+  .arch .arrow {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: clamp(0.4rem, 0.5vw, 0.55rem);
+    padding: clamp(3px, 0.3vh, 4px) 0;
+  }
+
+  .arch .layer .lname {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--accent);
+    font-size: clamp(0.65rem, 0.8vw, 0.9rem);
+    font-weight: 400;
+  }
+
+  /* ===========================================
+     BOTTOM
+     =========================================== */
+  .bottom-info {
+    position: absolute;
+    bottom: clamp(20px, 3vh, 36px);
+    left: clamp(24px, 3vw, 44px);
+    right: clamp(24px, 3vw, 44px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2;
+  }
+
+  .bottom-info .name {
+    font-family: var(--font-cn);
+    font-size: clamp(0.5rem, 0.6vw, 0.65rem);
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .bottom-info .hint {
+    font-family: var(--font-body);
+    font-size: clamp(0.45rem, 0.55vw, 0.6rem);
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===========================================
+     ANIMATIONS
+     =========================================== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(clamp(16px, 2.5vh, 30px)); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.07; }
+    50% { opacity: 0.11; }
+  }
+
+  .orb-1 { animation: pulseGlow 4s ease-in-out infinite; }
+
+  .slide .tag { animation: fadeUp 0.7s var(--ease-out-expo) 0.15s both; }
+  .slide h1, .slide h2 { animation: fadeUp 0.85s var(--ease-out-expo) 0.35s both; }
+  .slide .divider, .slide .accent-line, .slide .sub,
+  .slide .body-text:first-of-type { animation: fadeUp 0.75s var(--ease-out-expo) 0.55s both; }
+  .slide .grid, .slide .insight-block,
+  .slide .arch, .slide .timeline, .slide .quote { animation: fadeUp 0.8s var(--ease-out-expo) 0.7s both; }
+  .slide .bottom-info { animation: fadeUp 0.6s var(--ease-out-expo) 0.9s both; }
+
+  /* ===========================================
+     RESPONSIVE
+     =========================================== */
+  @media (max-width: 600px) {
+    .sub { max-width: 100%; }
+    .timeline { grid-template-columns: 1fr 1fr; }
+    .vline { display: none; }
+  }
+
+  @media (max-height: 500px) {
+    .top-bar, .bottom-info { display: none; }
+    .vline { display: none; }
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     SLIDE 0: TITLE
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">拜忻悦</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content">
+      <div class="tag"><span class="dash"></span> 产品架构推演 <span class="dash"></span></div>
+      <h1 style="font-size:clamp(3rem,10vw,7rem);font-weight:250;letter-spacing:0.1em;color:var(--accent);margin-bottom:clamp(4px,0.5vh,8px);line-height:1;">Helio</h1>
+      <div style="font-family:var(--font-display);font-size:clamp(1rem,2.5vw,2rem);font-weight:250;line-height:1.35;color:var(--text-secondary);letter-spacing:0.02em;animation:fadeUp 0.85s var(--ease-out-expo) 0.45s both;">
+        AI 不是<span style="color:var(--text-primary);font-weight:300;">工具</span><br>
+        是<span style="color:var(--accent);font-weight:300;">同事</span>
+      </div>
+      <div class="divider"></div>
+      <div class="sub">
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     SLIDE 1: PRODUCT EVOLUTION
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-3"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">产品脉络</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content left">
+      <div class="tag"><span class="dash"></span> 产品脉络 <span class="dash"></span></div>
+      <h2>数据层<span class="light"> → </span>流程层<span class="light"> → </span><span class="accent">协作层</span></h2>
+      <div class="accent-line"></div>
+
+      <div class="arch">
+        <div class="layer top">
+          <span class="lname">Helio</span>
+          <span>人和 AI 同事在同一个容器里协作</span>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="layer">
+          <span class="lname">Zgent</span>
+          <span>处理后的数据在人和 AI 之间有 SOP 地流转</span>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="layer">
+          <span class="lname">Sheet0</span>
+          <span>AI 处理数据：输入源，输出表</span>
+        </div>
+      </div>
+
+      <div class="body-text" style="margin-top:clamp(14px,2vh,22px); max-width:90%;">
+        五层关键设计：没有 New Chat · @即分配 · 多 AI 协作 · 长任务内联 · AI 主动发消息
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     SLIDE 2: TWO INSIGHTS
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">产品思考</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content left">
+      <div class="tag"><span class="dash"></span> 产品思考 <span class="dash"></span></div>
+      <h2>两个值得<span class="accent">深入</span>的方向</h2>
+      <div class="accent-line"></div>
+
+      <div class="insight-block">
+        <h3>用户画像机制 · 新人见面会</h3>
+        <p>
+          AI 同事进群能读历史。但如果在用户使用前给 AI 一份自我介绍——<strong>工作习惯、专业背景、沟通风格</strong>——AI 入职第一天就能用你最舒服的方式协作。这不只是体验优化，是 AI 同事从好用到懂你
+        </p>
+      </div>
+
+      <div class="insight-block">
+        <h3>主动压缩记忆 · 经验蒸馏</h3>
+        <p>
+          没有 New Chat → 上下文持续膨胀。<strong>借鉴 Skill 按需加载的思路</strong>：一个项目结束 → 压缩成"项目名称+产出摘要" → 释放详细 token；需要回顾时 → 按需加载；长期积累 → 沉淀成抽象经验。
+        </p>
+      </div>
+
+      <div class="body-text" style="margin-top:clamp(10px,1.5vh,16px);">
+        上层是体验问题（AI 更聪明）；底层是成本问题（token 5-10 倍，<em>必须主动管理</em>）
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     SLIDE 3: GROWTH ENGINE
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">增长引擎</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content left">
+      <div class="tag"><span class="dash"></span> 增长引擎 <span class="dash"></span></div>
+      <h2>产品能力本身就是<span class="accent">增长引擎</span></h2>
+      <div class="accent-line"></div>
+      <div class="body-text">
+        经验蒸馏不止解决成本——它让 AI 同事可以被<strong>训练、打包、分享</strong>。这打开了 Helio 独有的增长方式。
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.2vw,18px);margin-top:clamp(14px,2vh,24px);width:100%;max-width:min(90vw,860px);">
+        <div class="card">
+          <span class="num">1</span>
+          <h3>AI 同事模板市场</h3>
+          <p>你调教好的 AI，压缩成 skill 包分享。别人安装后直接得到一个同样性格的 AI，不需要从零重新调教。</p>
+        </div>
+        <div class="card">
+          <span class="num">2</span>
+          <h3>工作签名 = 天然广告</h3>
+          <p>AI 输出底部带签名。截图分享到即刻、Twitter、小红书、微信，就是 0 成本持续曝光。</p>
+        </div>
+        <div class="card">
+          <span class="num">3</span>
+          <h3>跨团队传播</h3>
+          <p>A → B → C。每轮分享都是新注册。不是"人拉人"，是"训练好的 AI 同事跨团队传播"。</p>
+        </div>
+      </div>
+
+      <div class="body-text" style="margin-top:clamp(8px,1.2vh,14px);">
+        Helio 的 MCP 预配置、<strong>零配置开箱用</strong>——让分享后的上手没有摩擦。
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     SLIDE 4: PRICING
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">商业判断</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content left">
+      <div class="tag"><span class="dash"></span> 产品定价 <span class="dash"></span></div>
+      <h2>$20/AI/月 不是<span class="light">数学</span> 是<span class="accent">战略</span></h2>
+      <div class="accent-line"></div>
+
+      <div class="body-text">
+        $20 是补贴价。靠<strong>三件事</strong>让模式长期跑通：
+      </div>
+
+      <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="card" style="text-align:center;">
+          <span class="num">1</span>
+          <h3>模型分层</h3>
+          <p>日常用小模型<br>复杂用付费 API</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="num">2</span>
+          <h3>主动压缩记忆</h3>
+          <p>10 倍 token 消耗<br>压回可控区间</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="num">3</span>
+          <h3>赌模型降价</h3>
+          <p>2025-2026 是<br>API 价格暴跌窗口</p>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: repeat(3, 1fr); margin-top:clamp(8px,1vh,12px);">
+        <div class="card" style="text-align:center; padding:clamp(8px,1vw,14px);">
+          <h3 style="font-size:clamp(0.7rem,0.85vw,0.9rem);">Free</h3>
+          <p style="font-size:clamp(0.65rem,0.75vw,0.85rem);">2 AI · 尝鲜</p>
+        </div>
+        <div class="card" style="text-align:center; padding:clamp(8px,1vw,14px); border-color:rgba(184,149,106,0.2);">
+          <h3 style="font-size:clamp(0.7rem,0.85vw,0.9rem); color:var(--accent);">$20/AI</h3>
+          <p style="font-size:clamp(0.65rem,0.75vw,0.85rem);">补贴价 · 占位</p>
+        </div>
+        <div class="card" style="text-align:center; padding:clamp(8px,1vw,14px);">
+          <h3 style="font-size:clamp(0.7rem,0.85vw,0.9rem);">自定义</h3>
+          <p style="font-size:clamp(0.65rem,0.75vw,0.85rem);">企业 · 利润来源</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     SLIDE 5: 30-DAY PLAN
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">30 天计划</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content left">
+      <div class="tag"><span class="dash"></span> GTM计划 <span class="dash"></span></div>
+      <h2>前 30 天 <span class="accent">做什么</span></h2>
+      <div class="accent-line"></div>
+
+      <div class="timeline">
+        <div class="week">
+          <div class="label">Week 1 · 浸泡</div>
+          <ul>
+            <li>产品完全吃透，走通所有场景</li>
+            <li>10-15 个 用户深度访谈</li>
+            <li>建立用户需求地图</li>
+          </ul>
+        </div>
+        <div class="week">
+          <div class="label">Week 2 · 标尺</div>
+          <ul>
+            <li>搭建增长指标体系</li>
+            <li>定义北极星指标</li>
+            <li>建立数据看板</li>
+          </ul>
+        </div>
+        <div class="week">
+          <div class="label">Week 3 · 引擎</div>
+          <ul>
+            <li>AI 模板分享 MVP</li>
+            <li>即刻 / Twitter / 小红书社区启动</li>
+            <li>跑通第一个分享→注册</li>
+          </ul>
+        </div>
+        <div class="week">
+          <div class="label">Week 4 · 迭代</div>
+          <ul>
+            <li>第一个用户案例</li>
+            <li>首次→激活漏斗闭环</li>
+            <li>30 天复盘 + Q2 规划</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     SLIDE 6: CLOSING
+     ============================================ -->
+<section class="slide">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="vline"></div>
+
+  <div class="top-bar">
+    <span class="logo"><span class="accent-dot"></span>Helio · GTM</span>
+    <span class="page">betty</span>
+  </div>
+
+  <div class="slide-content">
+    <div class="content">
+      <div class="tag"><span class="dash"></span> 结尾 <span class="dash"></span></div>
+      <h2>为什么<span class="accent">我</span></h2>
+      <div class="divider"></div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.2vw,18px);margin-top:clamp(0px,0px,0px);width:100%;max-width:min(90vw,860px);">
+        <div class="card" style="text-align:center;">
+          <span class="num">产业</span>
+          <p>产业经济学硕士<br>理解商业结构和市场判断</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="num">严谨</span>
+          <p>会计学 + 事务所<br>底稿思维·数据可追溯</p>
+        </div>
+        <div class="card" style="text-align:center;">
+          <span class="num">动手</span>
+          <p>独立开发 Agent 产品<br>深度理解 Cursor / Claude Code</p>
+        </div>
+      </div>
+
+      <div class="quote">
+        "Helio 正在定义一个新的品类。GTM 的核心是让这个 AI 同事能被看见、被试用、被分享。我的工作就是设计这个链条——从一个人试用，到一个团队依赖，到一个公司标配。"
+        <span class="attr">betty · Helio GTM 构想</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-info">
+    <span class="name">betty · 产业经济学 · 独立开发者</span>
+    <span class="hint">← → 键盘导航</span>
+  </div>
+</section>
+
+<!-- ============================================
+     NAVIGATION
+     ============================================ -->
+<nav class="side-nav" id="sideNav"></nav>
+
+<script>
+  (function() {
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const labels = ['', '产品脉络', '产品思考', '增长引擎', '产品定价', 'GTM计划', '结尾'];
+
+    // Side navigation
+    var nav = document.getElementById('sideNav');
+    for (var i = 0; i < total; i++) {
+      var item = document.createElement('div');
+      item.className = 'nav-item' + (i === 0 ? ' active' : '');
+      item.dataset.index = i;
+
+      var dot = document.createElement('span');
+      dot.className = 'nav-dot';
+      item.appendChild(dot);
+
+      if (labels[i]) {
+        var label = document.createElement('span');
+        label.className = 'nav-label';
+        label.textContent = labels[i];
+        item.appendChild(label);
+      }
+
+      item.addEventListener('click', function() {
+        var idx = parseInt(this.dataset.index);
+        slides[idx].scrollIntoView({ behavior: 'smooth' });
+      });
+      nav.appendChild(item);
+    }
+
+    // Intersection Observer
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          var idx = Array.prototype.indexOf.call(slides, entry.target);
+          var items = nav.querySelectorAll('.nav-item');
+          items.forEach(function(item, i) {
+            item.className = 'nav-item' + (i === idx ? ' active' : '');
+          });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    slides.forEach(function(s) { observer.observe(s); });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      var current = document.querySelector('.slide.visible');
+      if (!current) return;
+      var idx = Array.prototype.indexOf.call(slides, current);
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') && idx < total - 1) {
+        e.preventDefault();
+        slides[idx + 1].scrollIntoView({ behavior: 'smooth' });
+      } else if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && idx > 0) {
+        e.preventDefault();
+        slides[idx - 1].scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    // Touch navigation
+    var touchStartX = 0, touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    });
+    document.addEventListener('touchend', function(e) {
+      var current = document.querySelector('.slide.visible');
+      if (!current) return;
+      var idx = Array.prototype.indexOf.call(slides, current);
+      var dx = e.changedTouches[0].screenX - touchStartX;
+      var dy = e.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        if (dx < 0 && idx < total - 1) slides[idx + 1].scrollIntoView({ behavior: 'smooth' });
+        else if (dx > 0 && idx > 0) slides[idx - 1].scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
